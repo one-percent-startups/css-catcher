@@ -1,0 +1,33 @@
+{
+  "name": "CSS Catcher",
+  "description": "Catch and save web elements",
+  "manifest_version": 3,
+  "version": "1.0.1",
+  "background": {
+    "service_worker": "background.js"
+  },
+  "permissions": [
+    "tabs",
+    "storage"
+  ],
+  "action": {
+    "default_popup": "popup.html"
+  },
+  "options_page": "options.html",
+  "content_scripts": [
+    {
+      "matches": [
+        "http://*/*",
+        "https://*/*"
+      ],
+      "css": [
+        "core.css"
+      ],
+      "js": [
+        "core.js"
+      ],
+      "run_at": "document_end",
+      "all_frames": true
+    }
+  ]
+}
