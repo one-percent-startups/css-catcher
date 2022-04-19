@@ -10,52 +10,37 @@ function mainFunction(e) {
   prevDOM = srcElement;
 }
 
-function filterChildNodes(childNodes = []) {
-  return childNodes
-    .filter(
-      (node) => !(node.nodeName === "#text" && node.textContent.match(/\\*/))
-    )
-    .map((node) => ({
-      nodeName: node.nodeName,
-      textContent: node.textContent,
-    }));
-}
-
 function getChildren(element) {
-  let {
-    draggable,
-    children,
-    childNodes,
-    innerText,
-    title,
-    textContent,
-    nodeName,
-  } = element;
-  let computedstyles = window.getComputedStyle(element);
-  let style = {};
-  Object.keys(computedstyles).forEach((key) => {
-    if (isNaN(parseInt(key))) {
-      style[key] = computedstyles[key];
-    }
-  });
-  let childArray = [],
+  let { children, childNodes, innerText, title, textContent, nodeName } =
+    element;
+  let style = {},
+    childArray = [],
     nodes = [];
-  if (Object.keys(children).length > 0) {
-    childArray = Object.values(children).map((el) => {
-      return getChildren(el);
+  try {
+    let computedstyles = window.getComputedStyle(element);
+    Object.keys(computedstyles).forEach((key) => {
+      if (isNaN(parseInt(key))) {
+        style[key] = computedstyles[key];
+      }
     });
-    nodes = filterChildNodes(Object.values(childNodes));
+    if (Object.keys(childNodes).length > 0) {
+      nodes = Object.values(childNodes).map((el) => getChildren(el));
+    }
+    if (Object.keys(children).length > 0)
+      childArray = Object.values(children).map((el) => getChildren(el));
+  } catch {
+    // do nothing
+  } finally {
+    return {
+      children: childArray,
+      childNodes: nodes,
+      innerText,
+      title,
+      textContent,
+      nodeName,
+      style,
+    };
   }
-  return {
-    draggable,
-    children: childArray,
-    childNodes: nodes,
-    innerText,
-    title,
-    textContent,
-    nodeName,
-    style,
-  };
 }
 
 function onClick(e) {
@@ -63,23 +48,18 @@ function onClick(e) {
   e.stopPropagation();
   let element = e.target;
   console.dir(element);
-  let {
-    draggable,
-    children,
-    childNodes,
-    innerText,
-    title,
-    textContent,
-    nodeName,
-  } = element;
+  let { children, childNodes, innerText, title, textContent, nodeName } =
+    element;
   let childArray = [],
     nodes = [];
-  if (Object.keys(children).length > 0) {
+  if (Object.keys(children).length > 0)
     Object.values(children).forEach((el) => {
       childArray.push(getChildren(el));
     });
-    nodes = filterChildNodes(Object.values(childNodes));
-  }
+  if (Object.keys(childNodes).length > 0)
+    Object.values(childNodes).forEach((el) => {
+      nodes.push(getChildren(el));
+    });
   let computedstyles = window.getComputedStyle(element);
   let style = {};
   Object.keys(computedstyles).forEach((key) => {
@@ -88,7 +68,6 @@ function onClick(e) {
     }
   });
   let data = {
-    draggable,
     children: childArray,
     childNodes: nodes,
     innerText,
