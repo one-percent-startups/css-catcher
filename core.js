@@ -11,10 +11,8 @@ function mainFunction(e) {
 }
 
 function getChildren(element) {
-  let { children, childNodes, innerText, title, textContent, nodeName } =
-    element;
+  let { childNodes, innerText, title, textContent, nodeName } = element;
   let style = {},
-    childArray = [],
     nodes = [];
   try {
     let computedstyles = window.getComputedStyle(element);
@@ -26,13 +24,10 @@ function getChildren(element) {
     if (Object.keys(childNodes).length > 0) {
       nodes = Object.values(childNodes).map((el) => getChildren(el));
     }
-    if (Object.keys(children).length > 0)
-      childArray = Object.values(children).map((el) => getChildren(el));
   } catch {
     // do nothing
   } finally {
     return {
-      children: childArray,
       childNodes: nodes,
       innerText,
       title,
@@ -47,15 +42,8 @@ function onClick(e) {
   e.preventDefault();
   e.stopPropagation();
   let element = e.target;
-  console.dir(element);
-  let { children, childNodes, innerText, title, textContent, nodeName } =
-    element;
-  let childArray = [],
-    nodes = [];
-  if (Object.keys(children).length > 0)
-    Object.values(children).forEach((el) => {
-      childArray.push(getChildren(el));
-    });
+  let { childNodes, innerText, title, textContent, nodeName } = element;
+  let nodes = [];
   if (Object.keys(childNodes).length > 0)
     Object.values(childNodes).forEach((el) => {
       nodes.push(getChildren(el));
@@ -68,7 +56,6 @@ function onClick(e) {
     }
   });
   let data = {
-    children: childArray,
     childNodes: nodes,
     innerText,
     title,
@@ -76,8 +63,7 @@ function onClick(e) {
     style,
     nodeName,
   };
-  console.log("data", data);
-  // chrome.runtime.sendMessage({ data });
+  chrome.runtime.sendMessage({ data });
   prevDOM.classList.remove(MOUSE_VISITED_CLASSNAME);
   document.removeEventListener("mousemove", mainFunction);
   chrome.storage.local.set({ selected: false });
