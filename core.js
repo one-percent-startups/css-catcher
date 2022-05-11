@@ -41,6 +41,7 @@ function getChildren(element) {
 function onClick(e) {
   e.preventDefault();
   e.stopPropagation();
+  prevDOM.classList.remove(MOUSE_VISITED_CLASSNAME);
   let element = e.target;
   let { childNodes, innerText, title, textContent, nodeName } = element;
   let nodes = [];
@@ -64,7 +65,6 @@ function onClick(e) {
     nodeName,
   };
   chrome.runtime.sendMessage({ data });
-  prevDOM.classList.remove(MOUSE_VISITED_CLASSNAME);
   document.removeEventListener("mousemove", mainFunction);
   chrome.storage.local.set({ selected: false });
 }
