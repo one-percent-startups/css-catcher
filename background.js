@@ -1,5 +1,9 @@
-chrome.runtime.onInstalled.addListener(() => {
-  console.log("run installed");
+chrome.runtime.onInstalled.addListener((reason) => {
+  if (reason.reason === chrome.runtime.OnInstalledReason.INSTALL) {
+    chrome.tabs.create({
+      url: "onboarding.html",
+    });
+  }
 });
 
 chrome.runtime.onMessage.addListener((req, sender, sendRes) => {
@@ -11,8 +15,12 @@ chrome.runtime.onMessage.addListener((req, sender, sendRes) => {
         "Content-type": "application/json",
       },
     })
-      .then((res) => console.log("res", res))
+      .then((res) => res.json())
       .then((data) => console.log("data", data))
       .catch((err) => console.log("err", err));
+  } else if ("login" in req && req.login) {
+    chrome.tabs.create({
+      url: "onboarding.html",
+    });
   }
 });

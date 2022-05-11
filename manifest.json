@@ -2,7 +2,7 @@
   "name": "CSS Catcher",
   "description": "Catch and save web elements",
   "manifest_version": 3,
-  "version": "1.0.1",
+  "version": "1.0.2",
   "background": {
     "service_worker": "background.js"
   },
@@ -13,7 +13,10 @@
   "action": {
     "default_popup": "popup.html"
   },
-  "options_page": "options.html",
+  "options_ui": {
+    "page": "options.html",
+    "open_in_tab": true
+  },
   "content_scripts": [
     {
       "matches": [
